@@ -1,0 +1,8 @@
+# CGI directory mapping
+http://example.org/ja/cgi-bin/ => /export/www/cgi-bin/
+http://example.org/mailman/    => /usr/local/mailman/cgi-bin/
+# Directory mapping
+http://example.org/pipermail/  -> /usr/local/mailman/archives/public/
+http://example.org/icons/      -> /usr/local/mailman/icons/
+http://example.org/~user/      -> /home/user/public_html/
+http://example.org/            -> /export/www/

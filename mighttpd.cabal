@@ -1,0 +1,24 @@
+Name:                   mighttpd
+Version:                0.1.0
+Author:                 Kazu Yamamoto <kazu@iij.ad.jp>
+Maintainer:             Kazu Yamamoto <kazu@iij.ad.jp>
+License:                BSD3
+License-File:           LICENSE
+Synopsis:               Simple Web Server in Haskell
+Description:            A simple but practical HTTP server in Haskell.
+                        'mighttpd' should be called 'mighty'.
+Homepage:               http://www.mew.org/~kazu/proj/mighttpd/
+Category:               Netowrk
+Cabal-Version:          >= 1.2
+Build-Type:             Simple
+Executable mighttpd
+    Main-Is:            Mighttpd.hs
+    GHC-Options:        -Wall -O2
+    Build-Depends:      base >= 4,
+                        parsec >= 3,
+                        c10k, hslogger, webserver, bytestring, filepath,
+                        haskell98, hdaemonize, directory, unix, time, network
+Executable mkindex
+    Main-Is:            mkindex.hs
+    GHC-Options:        -Wall -O2
+    Build-Depends:      base >= 4
