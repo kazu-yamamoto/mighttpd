@@ -11,12 +11,12 @@ Homepage:               http://www.mew.org/~kazu/proj/mighttpd/
 Category:               Network
 Cabal-Version:          >= 1.6
 Build-Type:             Simple
+Extra-Source-Files:     Config.hs, LogMsg.hs, Setup.hs, File.hs, URLMap.hs
 Data-Files:             sample.conf, sample.map
 Executable mighttpd
     Main-Is:            Mighttpd.hs
     GHC-Options:        -Wall -O2
-    Build-Depends:      base >= 4,
-                        parsec >= 3,
+    Build-Depends:      base >= 4 && < 10, parsec >= 3,
                         c10k, hslogger, webserver, bytestring, filepath,
                         haskell98, hdaemonize, directory, unix, time, network
 Executable mkindex
