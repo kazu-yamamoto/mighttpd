@@ -8,9 +8,10 @@ Synopsis:               Simple Web Server in Haskell
 Description:            A simple but practical HTTP server in Haskell.
                         'mighttpd' should be called 'mighty'.
 Homepage:               http://www.mew.org/~kazu/proj/mighttpd/
-Category:               Netowrk
-Cabal-Version:          >= 1.2
+Category:               Network
+Cabal-Version:          >= 1.6
 Build-Type:             Simple
+Data-Files:             sample.conf, sample.map
 Executable mighttpd
     Main-Is:            Mighttpd.hs
     GHC-Options:        -Wall -O2
