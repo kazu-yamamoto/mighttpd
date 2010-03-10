@@ -11,8 +11,8 @@ Homepage:               http://www.mew.org/~kazu/proj/mighttpd/
 Category:               Network
 Cabal-Version:          >= 1.6
 Build-Type:             Simple
-Extra-Source-Files:     Config.hs, LogMsg.hs, Setup.hs, File.hs, URLMap.hs
-Data-Files:             sample.conf, sample.map
+Extra-Source-Files:     Config.hs LogMsg.hs Setup.hs File.hs URLMap.hs
+Data-Files:             sample.conf sample.map
 Executable mighttpd
     Main-Is:            Mighttpd.hs
     GHC-Options:        -Wall -O2
@@ -23,3 +23,6 @@ Executable mkindex
     Main-Is:            mkindex.hs
     GHC-Options:        -Wall -O2
     Build-Depends:      base >= 4
+Source-Repository head
+  Type:                 git
+  Location:             git://github.com/kazu-yamamoto/mighttpd.git
