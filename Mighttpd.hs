@@ -32,7 +32,7 @@ main = do
     fileName n = do
         args <- getArgs
         when (length args /= 2) $ do
-            hPutStrLn stderr "Usage: pbws config_file uri_map"
+            hPutStrLn stderr "Usage: mighttpd config_file uri_map"
             exitFailure
         return $ args !! n
 

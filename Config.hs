@@ -19,7 +19,7 @@ defaultOption = Option {
   , opt_group = "nobody"
   , opt_syslog_facility = "local5"
   , opt_log_level = "info"
-  , opt_pid_file = "/var/run/pbws.pid"
+  , opt_pid_file = "/var/run/mighttpd.pid"
 }
 
 data Option = Option {
