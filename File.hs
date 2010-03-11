@@ -7,7 +7,7 @@ import Data.List
 import Data.Time
 import Data.Time.Clock.POSIX
 import IO
-import Network.TCPInfo
+import Network.Socket
 import Network.URI
 import Network.Web.Server
 import Network.Web.Server.Basic
@@ -28,8 +28,10 @@ progNameVersion = progName ++ " " ++ progVersion
 
 ----------------------------------------------------------------
 
-mighty :: WebConfig -> URLMap -> Handle -> TCPInfo -> IO ()
-mighty wcnf umap hdl tcpinfo = do
+mighty :: WebConfig -> URLMap -> Socket -> IO ()
+mighty wcnf umap s = do
+  tcpinfo <- getTCPInfo s
+  hdl <- socketToHandle s ReadWriteMode
   let bcnf = BasicConfig { obtain = fileGet
                          , info   = fileInfo
                          , mapper = fileMapper umap
