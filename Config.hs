@@ -2,6 +2,7 @@
 
 module Config (Option(..), parseOption, defaultOption) where
 
+import Control.Applicative ((<$>),(<$),(<*),(<*>),(*>))
 import Text.ParserCombinators.Parsec
 import Data.List (isPrefixOf)
 
@@ -86,9 +87,9 @@ instance FromConf String where
 ----------------------------------------------------------------
 
 parseConfig :: String -> [Conf]
-parseConfig cs = let css = filter (not.isPrefixOf "#") $ lines cs
-                 in map parseConf css
+parseConfig cs = map parseConf css
     where
+      css = filter (not.isPrefixOf "#") . lines $ cs
       parseConf xs = case parse config "config" xs of
                        Right cnf -> cnf
                        Left  err -> error $ "parseConfig " ++ show err
@@ -96,12 +97,7 @@ parseConfig cs = let css = filter (not.isPrefixOf "#") $ lines cs
 ----------------------------------------------------------------
 
 config :: Parser Conf
-config = do nm <- name
-            spaces
-            char ':'
-            spaces
-            vl <- value
-            return (nm,vl)
+config = (,) <$> name <*> (spaces >> char ':' >> spaces *> value)
 
 name :: Parser String
 name = many1.oneOf $ ['a'..'z'] ++ ['A'..'Z'] ++ ['0'..'9'] ++ "_"
@@ -110,15 +106,11 @@ value :: Parser ConfValue
 value = choice [try cv_int, try cv_bool, cv_string]
 
 cv_int :: Parser ConfValue
-cv_int = do ns <- many1 digit
-            spaces
-            eof
-            return $ CV_Int $ read ns
+cv_int = CV_Int . read <$> (many1 digit <* (spaces >> eof))
 
 cv_bool :: Parser ConfValue
-cv_bool = do { string "Yes"; spaces; eof; return (CV_Bool True)  } <|>
-          do { string "No";  spaces; eof; return (CV_Bool False) }
+cv_bool = CV_Bool True  <$ (string "Yes" >> spaces >> eof) <|>
+          CV_Bool False <$ (string "No"  >> spaces >> eof)
 
 cv_string :: Parser ConfValue
-cv_string = do ss <- many1 (noneOf " \t\n")
-               return $ CV_String ss
+cv_string = CV_String <$> many1 (noneOf " \t\n")
