@@ -3,8 +3,8 @@
 module Config (Option(..), parseOption, defaultOption) where
 
 import Control.Applicative ((<$>),(<$),(<*),(<*>),(*>))
-import Text.ParserCombinators.Parsec
 import Data.List (isPrefixOf)
+import Text.ParserCombinators.Parsec
 
 ----------------------------------------------------------------
 
@@ -59,9 +59,7 @@ makeOpt def conf = Option {
   , opt_pid_file         = get "Pid_File" opt_pid_file
   }
     where
-      get key func = case lookup key conf of
-                       Nothing -> func def
-                       Just x  -> fromConf x
+      get key func = maybe (func def) fromConf $ lookup key conf
 
 ----------------------------------------------------------------
 
