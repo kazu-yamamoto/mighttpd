@@ -6,7 +6,6 @@ import qualified Data.ByteString.Lazy.Char8 as LBS
 import Data.List
 import Data.Time
 import Data.Time.Clock.POSIX
-import IO
 import Network.Socket
 import Network.Web.Server
 import Network.Web.Server.Basic
@@ -14,6 +13,7 @@ import Network.Web.URI
 import Network.Web.Utils
 import System.Directory
 import System.FilePath
+import System.IO
 import System.Posix.Files
 import URLMap
 
@@ -32,6 +32,7 @@ mighty :: WebConfig -> URLMap -> Socket -> IO ()
 mighty wcnf umap s = do
   tcpinfo <- getTCPInfo s
   hdl <- socketToHandle s ReadWriteMode
+  hSetBinaryMode hdl True
   let bcnf = BasicConfig { obtain = fileGet
                          , info   = fileInfo
                          , mapper = fileMapper umap
