@@ -1,8 +1,8 @@
 module URLMap (parseURLMap, URL, URLMap) where
 
 import Control.Applicative ((<$>),(<$),(<*),(<*>),(*>),pure)
-import Network.URI
 import Network.Web.Server.Basic
+import Network.Web.URI
 import Text.Parsec
 import Text.Parsec.String
 

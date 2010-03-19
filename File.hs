@@ -8,9 +8,9 @@ import Data.Time
 import Data.Time.Clock.POSIX
 import IO
 import Network.Socket
-import Network.URI
 import Network.Web.Server
 import Network.Web.Server.Basic
+import Network.Web.URI
 import Network.Web.Utils
 import System.Directory
 import System.FilePath
