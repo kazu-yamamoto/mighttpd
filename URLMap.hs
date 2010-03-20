@@ -1,22 +1,25 @@
+{-# LANGUAGE OverloadedStrings #-}
+
 module URLMap (parseURLMap, URL, URLMap) where
 
 import Control.Applicative ((<$>),(<$),(<*),(<*>),(*>),pure)
+import qualified Data.ByteString.Char8 as S
 import Network.Web.Server.Basic
 import Network.Web.URI
 import Text.Parsec
 import Text.Parsec.String
 
-type URL = String
+type URL = S.ByteString
 type URLMap = [(URL,Path)]
 
 parseURLMap :: String -> URLMap
 parseURLMap cs = either (fail . show) (map fixCGI) (parse umap "umap" cs)
   where
-    fixCGI (k, CGI prog param _) = (k, CGI prog param (scriptDir k))
-    fixCGI x                     = x
-    scriptDir x = maybe "" uriPath (parseURI x)
+    fixCGI (k, CGI prog param _) = (S.pack k, CGI prog param (scriptDir k))
+    fixCGI (k,v)                 = (S.pack k, v)
+    scriptDir x = maybe "" uriPath $ parseURI $ S.pack x
 
-umap :: Parser [(URL,Path)]
+umap :: Parser [(String,Path)]
 umap =  comments *> many (line <* comments)
 
 comments :: Parser ()
@@ -25,10 +28,10 @@ comments = () <$ many comment
 comment :: Parser ()
 comment = () <$ char '#' >> many (noneOf "\n") >> eol
 
-line :: Parser (URL,Path)
+line :: Parser (String,Path)
 line = (,) <$> uri <*> (fileOrCGI <* eol)
 
-uri :: Parser URL
+uri :: Parser String
 uri = spcs *> (str <* spcs)
 
 fileOrCGI :: Parser Path
