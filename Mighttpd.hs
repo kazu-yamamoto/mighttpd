@@ -26,8 +26,8 @@ main = do
         !uriMap     = parseURLMap mapf
         !prog       = mighty webConfig uriMap
     if opt_debug_mode opt
-       then runC10kServer prog c10kConfig
-       else daemonize $ runC10kServer prog c10kConfig
+       then runC10kServerH prog c10kConfig
+       else daemonize $ runC10kServerH prog c10kConfig
   where
     fileName n = do
         args <- getArgs

@@ -8,11 +8,10 @@ import qualified Data.ByteString.Lazy.Char8 as L
 import Data.List
 import Data.Time
 import Data.Time.Clock.POSIX
-import Network.Socket
+import Network.TCPInfo
 import Network.Web.Server
 import Network.Web.Server.Basic
 import Network.Web.URI
-import Network.Web.Utils
 import System.Directory
 import System.FilePath
 import System.IO
@@ -30,11 +29,8 @@ progNameVersion = progName ++ " " ++ progVersion
 
 ----------------------------------------------------------------
 
-mighty :: WebConfig -> URLMap -> Socket -> IO ()
-mighty wcnf umap s = do
-  tcpinfo <- getTCPInfo s
-  hdl <- socketToHandle s ReadWriteMode
-  hSetBinaryMode hdl True
+mighty :: WebConfig -> URLMap -> Handle -> TCPInfo -> IO ()
+mighty wcnf umap hdl tcpinfo = do
   let bcnf = BasicConfig { obtain = fileGet
                          , info   = fileInfo
                          , mapper = fileMapper umap
