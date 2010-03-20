@@ -44,23 +44,21 @@ mighty wcnf umap hdl tcpinfo = do
 lookupFileMap :: URLMap -> URL -> Path
 lookupFileMap [] _          = None
 lookupFileMap ((from,to):xs) url
-    | from `S.isPrefixOf` url = toPath to $ S.unpack $ S.drop (S.length from) url
+    | from `isPrefixOf` url = toPath to $ drop (length from) url
     | otherwise               = lookupFileMap xs url
   where
     toPath (File dir) restPath = File $ dir </> restPath
-    toPath (CGI dir _ urlPath) progParam = CGI prog (S.pack param) scriptName
+    toPath (CGI dir _ urlPath) progParam = CGI prog param scriptName
       where
         (prog',param) = break (\x -> x == '?' || x == '/') progParam
         prog = dir </> prog'
-        scriptName
-          | "/" `S.isSuffixOf` urlPath = urlPath `S.append` S.pack prog'
-          | otherwise                  = urlPath `S.append` "/" `S.append` S.pack prog'
+        scriptName = urlPath </> prog'
     toPath _ _ = error "toPath"
 
 fileMapper :: URLMap -> URI -> Path
 fileMapper umap uri = fileMapper' (lookupFileMap umap url)
   where
-    url = unEscapeString $ toURLwoPort uri
+    url = unEscapeString . S.unpack . toURLwoPort $ uri
     fileMapper' None                  = None
     fileMapper' cgi@(CGI _ _ _)       = cgi
     fileMapper' (File file)

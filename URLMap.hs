@@ -9,17 +9,17 @@ import Network.Web.URI
 import Text.Parsec
 import Text.Parsec.String
 
-type URL = S.ByteString
+type URL = String
 type URLMap = [(URL,Path)]
 
 parseURLMap :: String -> URLMap
 parseURLMap cs = either (fail . show) (map fixCGI) (parse umap "umap" cs)
   where
-    fixCGI (k, CGI prog param _) = (S.pack k, CGI prog param (scriptDir k))
-    fixCGI (k,v)                 = (S.pack k, v)
-    scriptDir x = maybe "" uriPath $ parseURI $ S.pack x
+    fixCGI (k, CGI prog param _) = (k, CGI prog param (scriptDir k))
+    fixCGI kv                    = kv
+    scriptDir x = maybe "" (S.unpack . uriPath) $ parseURI $ S.pack x
 
-umap :: Parser [(String,Path)]
+umap :: Parser [(URL,Path)]
 umap =  comments *> many (line <* comments)
 
 comments :: Parser ()
@@ -28,10 +28,10 @@ comments = () <$ many comment
 comment :: Parser ()
 comment = () <$ char '#' >> many (noneOf "\n") >> eol
 
-line :: Parser (String,Path)
+line :: Parser (URL,Path)
 line = (,) <$> uri <*> (fileOrCGI <* eol)
 
-uri :: Parser String
+uri :: Parser URL
 uri = spcs *> (str <* spcs)
 
 fileOrCGI :: Parser Path
