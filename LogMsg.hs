@@ -3,7 +3,6 @@ module LogMsg (initLog,
                errorMsg, warnMsg, noticeMsg,
                infoMsg, debugMsg) where
 
-import Data.Maybe
 import System.Log.Logger
 import System.Log.Handler.Syslog
 

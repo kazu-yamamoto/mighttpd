@@ -15,7 +15,7 @@ Extra-Source-Files:     Config.hs LogMsg.hs Setup.hs File.hs URLMap.hs
 Data-Files:             sample.conf sample.map
 Executable mighttpd
     Main-Is:            Mighttpd.hs
-    GHC-Options:        -Wall -O2
+    GHC-Options:        -Wall -O2 -fno-warn-unused-do-bind
     Build-Depends:      base >= 4 && < 10, parsec >= 3,
                         c10k, hslogger, webserver, bytestring, filepath,
                         haskell98, hdaemonize, directory, unix, time, network

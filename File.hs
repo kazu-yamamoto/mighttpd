@@ -45,22 +45,28 @@ lookupFileMap :: URLMap -> URL -> Path
 lookupFileMap [] _          = None
 lookupFileMap ((from,to):xs) url
     | from `isPrefixOf` url = toPath to $ drop (length from) url
-    | otherwise               = lookupFileMap xs url
+    | otherwise             = lookupFileMap xs url
+
+toPath :: ConvInfo -> FilePath -> Path
+toPath (CIFile dir)   restPath  = File $ dir </> restPath
+toPath ci@(CICgi _ _) progParam = PathCGI $ CGI {
+    progPath    = prog
+    , scriptName  = scriptname
+    , pathInfo    = path
+    , queryString = query
+    }
   where
-    toPath (File dir) restPath = File $ dir </> restPath
-    toPath (CGI dir _ urlPath) progParam = CGI prog param scriptName
-      where
-        (prog',param) = break (\x -> x == '?' || x == '/') progParam
-        prog = dir </> prog'
-        scriptName = urlPath </> prog'
-    toPath _ _ = error "toPath"
+    (progParam',query)  = break (== '?') progParam
+    (prog',path)        = break (== '/') progParam'
+    prog = progDir ci </> prog'
+    scriptname = pathInURL ci </> prog'
 
 fileMapper :: URLMap -> URI -> Path
 fileMapper umap uri = fileMapper' (lookupFileMap umap url)
   where
     url = unEscapeString . S.unpack . toURLwoPort $ uri
     fileMapper' None                  = None
-    fileMapper' cgi@(CGI _ _ _)       = cgi
+    fileMapper' cgi@(PathCGI _)       = cgi
     fileMapper' (File file)
       | hasTrailingPathSeparator file = File $ file </> "index.html"
       | otherwise                     = File file

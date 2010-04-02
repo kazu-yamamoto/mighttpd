@@ -1,25 +1,28 @@
 {-# LANGUAGE OverloadedStrings #-}
 
-module URLMap (parseURLMap, URL, URLMap) where
+module URLMap (parseURLMap, URL, URLMap, ConvInfo(..)) where
 
 import Control.Applicative ((<$>),(<$),(<*),(<*>),(*>),pure)
 import qualified Data.ByteString.Char8 as S
-import Network.Web.Server.Basic
 import Network.Web.URI
 import Text.Parsec
 import Text.Parsec.String
 
 type URL = String
-type URLMap = [(URL,Path)]
+data ConvInfo = CIFile String | CICgi { progDir :: String
+                                      , pathInURL :: String
+                                      }
+                deriving Show
+type URLMap = [(URL,ConvInfo)]
 
 parseURLMap :: String -> URLMap
 parseURLMap cs = either (fail . show) (map fixCGI) (parse umap "umap" cs)
   where
-    fixCGI (k, CGI prog param _) = (k, CGI prog param (scriptDir k))
-    fixCGI kv                    = kv
-    scriptDir x = maybe "" (S.unpack . uriPath) $ parseURI $ S.pack x
+    fixCGI (k, ci@(CICgi _ _)) = (k, ci { pathInURL = scriptPath k})
+    fixCGI kv               = kv
+    scriptPath x = maybe "" (S.unpack . uriPath) $ parseURI $ S.pack x
 
-umap :: Parser [(URL,Path)]
+umap :: Parser URLMap
 umap =  comments *> many (line <* comments)
 
 comments :: Parser ()
@@ -28,20 +31,20 @@ comments = () <$ many comment
 comment :: Parser ()
 comment = () <$ char '#' >> many (noneOf "\n") >> eol
 
-line :: Parser (URL,Path)
+line :: Parser (URL,ConvInfo)
 line = (,) <$> uri <*> (fileOrCGI <* eol)
 
 uri :: Parser URL
 uri = spcs *> (str <* spcs)
 
-fileOrCGI :: Parser Path
+fileOrCGI :: Parser ConvInfo
 fileOrCGI = file <|> cgi
 
-file :: Parser Path
-file = File <$> (arrow *> dir)
+file :: Parser ConvInfo
+file = CIFile <$> (arrow *> dir)
 
-cgi :: Parser Path
-cgi = CGI <$> (darrow *> dir) <*> pure "" <*> pure ""
+cgi :: Parser ConvInfo
+cgi = CICgi <$> (darrow *> dir) <*> pure ""
 
 arrow :: Parser ()
 arrow = () <$ string "->" >> spcs
