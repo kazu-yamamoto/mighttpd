@@ -15,14 +15,21 @@ Extra-Source-Files:     Config.hs LogMsg.hs Setup.hs File.hs URLMap.hs
 Data-Files:             sample.conf sample.map
 Executable mighttpd
     Main-Is:            Mighttpd.hs
-    GHC-Options:        -Wall -O2 -fno-warn-unused-do-bind
-    Build-Depends:      base >= 4 && < 10, parsec >= 3,
+    if impl(ghc >= 6.12)
+      GHC-Options:        -Wall -O2 -fno-warn-unused-do-bind
+    else
+      GHC-Options:        -Wall -O2
+    Ghc-Prof-Options:   -prof -auto-all -caf-all
+    Build-Depends:      base == 4.2.*, parsec >= 3,
                         c10k, hslogger, webserver, bytestring, filepath,
                         haskell98, hdaemonize, directory, unix, time, network
 Executable mkindex
     Main-Is:            mkindex.hs
-    GHC-Options:        -Wall -O2
-    Build-Depends:      base >= 4
+    if impl(ghc >= 6.12)
+      GHC-Options:        -Wall -O2 -fno-warn-unused-do-bind
+    else
+      GHC-Options:        -Wall -O2
+    Build-Depends:      base == 4.2.*
 Source-Repository head
   Type:                 git
   Location:             git://github.com/kazu-yamamoto/mighttpd.git
