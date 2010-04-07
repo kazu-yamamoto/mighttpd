@@ -57,6 +57,7 @@ toC10kConfig opt = C10kConfig {
   , preforkProcessNumber = opt_prefork_process_number opt
   , threadNumberPerProcess = opt_thread_number_per_process opt
   , portName = show $ opt_port opt
+  , ipAddr = Nothing
   , pidFile = opt_pid_file opt
   , user = opt_user opt
   , group = opt_group opt
