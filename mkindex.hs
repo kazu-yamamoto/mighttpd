@@ -75,7 +75,7 @@ header = "\
 \h1 { font-size: x-large; }\n\
 \pre { font-size: large; }\n\
 \hr { text-align: left; margin-left: 0px; width: 80% }\n\
-\--!>\n\
+\-->\n\
 \</style>\n\
 \</head>\n\
 \<title>Directory contents</title>\n\
