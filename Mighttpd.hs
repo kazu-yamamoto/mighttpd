@@ -65,7 +65,7 @@ toC10kConfig opt = C10kConfig {
 
 makeInitHook :: Option -> IO ()
 makeInitHook opt =
-  if opt_debug_mode opt == True
+  if opt_debug_mode opt
   then initLog progName "" (opt_log_level opt) StdErr
   else initLog progName (opt_syslog_facility opt) (opt_log_level opt) SysLog
 
@@ -77,8 +77,6 @@ makeParentHook = infoMsg $ progName ++ " started"
 
 makeStartedHook :: Option -> IO ()
 makeStartedHook opt =
-  if opt_debug_mode opt == True
-  then do
-    initLog progName "" (opt_log_level opt) StdErr
-  else do
-    initLog progName (opt_syslog_facility opt) (opt_log_level opt) SysLog
+  if opt_debug_mode opt
+  then initLog progName "" (opt_log_level opt) StdErr
+  else initLog progName (opt_syslog_facility opt) (opt_log_level opt) SysLog

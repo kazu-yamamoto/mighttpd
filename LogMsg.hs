@@ -3,8 +3,9 @@ module LogMsg (initLog,
                errorMsg, warnMsg, noticeMsg,
                infoMsg, debugMsg) where
 
-import System.Log.Logger
+import Data.Maybe
 import System.Log.Handler.Syslog
+import System.Log.Logger
 
 errorMsg :: String -> IO ()
 errorMsg = errorM rootLoggerName
@@ -42,12 +43,12 @@ initLog _ _ lvl StdErr = do
     updateGlobalLogger rootLoggerName (setLevel level)
 
 toLevel :: String -> Priority
-toLevel str = maybe (error ("Unknown level " ++ show str))
-                     id (lookup str levelDB)
+toLevel str = fromMaybe (error ("Unknown level " ++ show str))
+                        (lookup str levelDB)
 
 toFacility :: String -> Facility
-toFacility str = maybe (error ("Unknown facility " ++ show str))
-                        id (lookup str facilityDB)
+toFacility str = fromMaybe (error ("Unknown facility " ++ show str))
+                           (lookup str facilityDB)
 
 levelDB :: [(String, Priority)]
 levelDB = [

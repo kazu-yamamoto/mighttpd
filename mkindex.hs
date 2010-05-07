@@ -56,7 +56,7 @@ ppSize st
   | isDirectory st = "  - "
   | otherwise      = sizeFormat . fromIntegral . fileSize $ st
   where
-    sizeFormat siz = unit siz [' ','K','M','G','T']
+    sizeFormat siz = unit siz " KMGT"
     unit _ []  = undefined
     unit s [u] = format s u
     unit s (u:us)

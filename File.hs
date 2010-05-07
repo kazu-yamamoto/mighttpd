@@ -49,7 +49,7 @@ lookupFileMap ((from,to):xs) url
 
 toPath :: ConvInfo -> FilePath -> Path
 toPath (CIFile dir)   restPath  = File $ dir </> restPath
-toPath ci@(CICgi _ _) progParam = PathCGI $ CGI {
+toPath ci@(CICgi _ _) progParam = PathCGI CGI {
     progPath    = prog
     , scriptName  = scriptname
     , pathInfo    = path
