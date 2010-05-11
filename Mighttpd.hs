@@ -11,7 +11,7 @@ import Network.C10kServer
 import Network.Web.Server
 import System.Environment
 import System.Exit
-import System.Posix.Daemonize
+import System.Posix.Daemonize (daemonize)
 import URLMap
 
 ----------------------------------------------------------------
