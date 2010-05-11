@@ -2,9 +2,8 @@
 
 module Config (Option(..), parseOption, defaultOption) where
 
-import Control.Applicative ((<$>),(<$),(<*),(<*>),(*>))
 import Data.List (isPrefixOf)
-import Text.ParserCombinators.Parsec
+import Parsec
 
 ----------------------------------------------------------------
 
