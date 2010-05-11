@@ -22,7 +22,7 @@ progName :: String
 progName = "Mighttpd"
 
 progVersion :: String
-progVersion = "0.4.1"
+progVersion = "0.4.2"
 
 progNameVersion :: String
 progNameVersion = progName ++ "/" ++ progVersion
