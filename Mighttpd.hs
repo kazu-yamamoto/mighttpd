@@ -5,12 +5,12 @@ module Main where
 import Config
 import Control.Monad
 import File
-import IO
 import LogMsg
 import Network.C10kServer
 import Network.Web.Server
 import System.Environment
 import System.Exit
+import System.IO
 import System.Posix.Daemonize (daemonize)
 import URLMap
 
