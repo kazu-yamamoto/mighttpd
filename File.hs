@@ -64,7 +64,7 @@ toPath ci@(CICgi _ _) progParam = PathCGI CGI {
 fileMapper :: URLMap -> URI -> Path
 fileMapper umap uri = fileMapper' (lookupFileMap umap url)
   where
-    url = unEscapeString . S.unpack . toURLwoPort $ uri
+    url = unEscapeString . S.unpack . toURLPath $ uri
     fileMapper' None                  = None
     fileMapper' cgi@(PathCGI _)       = cgi
     fileMapper' (File file)
