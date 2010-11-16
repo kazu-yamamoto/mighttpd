@@ -15,10 +15,13 @@ Extra-Source-Files:     Config.hs LogMsg.hs Setup.hs File.hs URLMap.hs Parsec.hs
 Data-Files:             sample.conf sample.map
 Executable mighttpd
   Main-Is:              Mighttpd.hs
-  if impl(ghc >= 6.12)
-    GHC-Options:        -Wall -O2 -fno-warn-unused-do-bind
+  if impl(ghc >= 7)
+    GHC-Options:        -Wall -O2 -fno-warn-unused-do-bind -threaded
   else
-    GHC-Options:        -Wall -O2
+    if impl(ghc >= 6.12)
+      GHC-Options:        -Wall -O2 -fno-warn-unused-do-bind
+    else
+      GHC-Options:        -Wall -O2
   Ghc-Prof-Options:     -prof -auto-all -caf-all
   Build-Depends:        base >= 4 && < 5, parsec,
                         c10k, hslogger, webserver, bytestring, filepath,
