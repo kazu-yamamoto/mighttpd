@@ -10,7 +10,7 @@ type URL = String
 data ConvInfo = CIFile String | CICgi { progDir :: String
                                       , pathInURL :: String
                                       }
-                deriving Show
+                deriving (Eq,Show)
 type URLMap = [(URL,ConvInfo)]
 
 parseURLMap :: String -> URLMap

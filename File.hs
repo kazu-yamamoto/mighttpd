@@ -1,6 +1,6 @@
 {-# LANGUAGE OverloadedStrings #-}
 
-module File (mighty, progName) where
+module File (mighty, progName, fileMapper) where -- xxx
 
 import Control.Applicative
 import qualified Data.ByteString.Char8      as S
@@ -41,35 +41,36 @@ mighty wcnf umap hdl tcpinfo = do
 
 ----------------------------------------------------------------
 
-lookupFileMap :: URLMap -> URL -> Path
-lookupFileMap [] _          = None
-lookupFileMap ((from,to):xs) url
-    | from `isPrefixOf` url = toPath to $ drop (length from) url
+lookupFileMap :: URLMap -> URL -> Maybe (URL,ConvInfo)
+lookupFileMap [] _          = Nothing
+lookupFileMap (ent@(from,_):xs) url
+    | from `isPrefixOf` url = Just ent
     | otherwise             = lookupFileMap xs url
 
-toPath :: ConvInfo -> FilePath -> Path
-toPath (CIFile dir)   restPath  = File $ dir </> restPath
-toPath ci@(CICgi _ _) progParam = PathCGI CGI {
-      progPath    = prog
-    , scriptName  = scriptname
-    , pathInfo    = path
-    , queryString = query
-    }
-  where
-    (progParam',query)  = break (== '?') progParam
-    (prog',path)        = break (== '/') progParam'
-    prog = progDir ci </> prog'
-    scriptname = pathInURL ci </> prog'
-
 fileMapper :: URLMap -> URI -> Path
-fileMapper umap uri = fileMapper' (lookupFileMap umap url)
+fileMapper umap uri = case lookupFileMap umap url of
+    Nothing           -> None
+    Just (curl,cinfo) -> fileMapper' uri url curl cinfo
   where
-    url = unEscapeString . S.unpack . toURLPath $ uri
-    fileMapper' None                  = None
-    fileMapper' cgi@(PathCGI _)       = cgi
-    fileMapper' (File file)
-      | hasTrailingPathSeparator file = File $ file </> "index.html"
-      | otherwise                     = File file
+    url = unEscapeString . S.unpack . toURLPath $ uri -- without param
+
+fileMapper' :: URI -> URL -> URL -> ConvInfo -> Path
+fileMapper' uri url curl cinfo = case cinfo of
+    CIFile dir      -> toFile (dir </> path0)
+    CICgi  dir path -> toCGI dir path
+  where
+    path0 = drop (length curl) url
+    toFile path
+      | hasTrailingPathSeparator path = File (path </> "index.html")
+      | otherwise                     = File path
+    toCGI dir path = PathCGI CGI {
+        progPath    = dir </> prog
+      , scriptName  = path </> prog
+      , pathInfo    = pathinfo
+      , queryString = S.unpack $ uriQuery uri
+      }
+      where
+        (prog,pathinfo) = break (== '/') path0
 
 fileGet :: FilePath -> Maybe (Integer,Integer) -> IO L.ByteString
 fileGet file Nothing = openFile file ReadMode >>= L.hGetContents
