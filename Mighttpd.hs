@@ -12,6 +12,7 @@ import System.Environment
 import System.Exit
 import System.IO
 import System.Posix.Daemonize (daemonize)
+import System.Posix.Signals
 import URLMap
 
 ----------------------------------------------------------------
@@ -77,6 +78,12 @@ makeParentHook = infoMsg $ progName ++ " started"
 
 makeStartedHook :: Option -> IO ()
 makeStartedHook opt =
-  if opt_debug_mode opt
-  then initLog progName "" (opt_log_level opt) StdErr
-  else initLog progName (opt_syslog_facility opt) (opt_log_level opt) SysLog
+    if opt_debug_mode opt
+    then do
+        ignoreSigChild
+        initLog progName "" (opt_log_level opt) StdErr
+    else do
+        ignoreSigChild
+        initLog progName (opt_syslog_facility opt) (opt_log_level opt) SysLog
+  where
+    ignoreSigChild = installHandler sigCHLD Ignore Nothing
