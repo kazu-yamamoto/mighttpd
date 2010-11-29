@@ -67,7 +67,7 @@ fileMapper' uri url curl cinfo = case cinfo of
         progPath    = dir </> prog
       , scriptName  = path </> prog
       , pathInfo    = pathinfo
-      , queryString = S.unpack $ uriQuery uri
+      , queryString = unEscapeString . S.unpack $ uriQuery uri
       }
       where
         (prog,pathinfo) = break (== '/') path0
