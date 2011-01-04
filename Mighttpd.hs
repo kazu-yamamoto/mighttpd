@@ -11,7 +11,7 @@ import Network.Web.Server
 import System.Environment
 import System.Exit
 import System.IO
-import System.Posix.Daemonize (daemonize)
+import System.Posix.Process
 import System.Posix.Signals
 import URLMap
 
@@ -87,3 +87,18 @@ makeStartedHook opt =
         initLog progName (opt_syslog_facility opt) (opt_log_level opt) SysLog
   where
     ignoreSigChild = installHandler sigCHLD Ignore Nothing
+
+daemonize :: IO () -> IO ()
+daemonize program = do
+    forkProcess p
+    exitImmediately ExitSuccess
+  where
+    p = do
+        createSession
+        forkProcess p'
+        exitImmediately ExitSuccess
+    p' = do
+        changeWorkingDirectory "/"
+        setFileCreationMask 0
+        mapM_ closeFd [stdInput, stdOutput, stdError]
+        program
