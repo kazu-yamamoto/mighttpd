@@ -7,9 +7,9 @@ import Network.Web.URI
 import Parsec
 
 type URL = String
-data ConvInfo = CIFile String | CICgi { progDir :: String
-                                      , pathInURL :: String
-                                      }
+data ConvInfo = CIFile !String | CICgi { progDir :: !String
+                                       , pathInURL :: !String
+                                       }
                 deriving (Eq,Show)
 type URLMap = [(URL,ConvInfo)]
 

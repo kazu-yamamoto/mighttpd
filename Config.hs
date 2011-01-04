@@ -23,17 +23,17 @@ defaultOption = Option {
 }
 
 data Option = Option {
-    opt_port :: Int
-  , opt_prefork_process_number :: Int
-  , opt_thread_number_per_process :: Int
-  , opt_connection_timer :: Int
-  , opt_sleep_timer :: Int
-  , opt_debug_mode :: Bool
-  , opt_user :: String
-  , opt_group :: String
-  , opt_syslog_facility :: String
-  , opt_log_level :: String
-  , opt_pid_file :: String
+    opt_port :: !Int
+  , opt_prefork_process_number :: !Int
+  , opt_thread_number_per_process :: !Int
+  , opt_connection_timer :: !Int
+  , opt_sleep_timer :: !Int
+  , opt_debug_mode :: !Bool
+  , opt_user :: !String
+  , opt_group :: !String
+  , opt_syslog_facility :: !String
+  , opt_log_level :: !String
+  , opt_pid_file :: !String
 } deriving Show
 
 ----------------------------------------------------------------
@@ -94,7 +94,7 @@ parseConfig cs = map parseConf css
 ----------------------------------------------------------------
 
 config :: Parser Conf
-config = (,) <$> name <*> (spaces >> char ':' >> spaces *> value)
+config = (,) <$> name <*> ((spaces >> char ':' >> spaces) *> value)
 
 name :: Parser String
 name = many1.oneOf $ ['a'..'z'] ++ ['A'..'Z'] ++ ['0'..'9'] ++ "_"
@@ -110,4 +110,4 @@ cv_bool = CV_Bool True  <$ (string "Yes" >> spaces >> eof) <|>
           CV_Bool False <$ (string "No"  >> spaces >> eof)
 
 cv_string :: Parser ConfValue
-cv_string = CV_String <$> many1 (noneOf " \t\n")
+cv_string = CV_String <$> many1 (noneOf " \t\n") <* eof
