@@ -76,14 +76,15 @@ makeParentHook :: IO ()
 makeParentHook = infoMsg $ progName ++ " started"
 
 makeStartedHook :: Option -> IO ()
-makeStartedHook opt =
+makeStartedHook opt = do
+    let initlog = opt_prefork_process_number opt /= 1
     if opt_debug_mode opt
-    then do
+      then do
         ignoreSigChild
-        initLog progName "" (opt_log_level opt) StdErr
-    else do
+        when initlog $ initLog progName "" (opt_log_level opt) StdErr
+      else do
         ignoreSigChild
-        initLog progName (opt_syslog_facility opt) (opt_log_level opt) SysLog
+        when initlog $ initLog progName (opt_syslog_facility opt) (opt_log_level opt) SysLog
   where
     ignoreSigChild = installHandler sigCHLD Ignore Nothing
 
