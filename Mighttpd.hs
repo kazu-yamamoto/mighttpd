@@ -11,8 +11,7 @@ import Network.Web.Server
 import System.Environment
 import System.Exit
 import System.IO
-import System.Posix.Process
-import System.Posix.Signals
+import System.Posix
 import URLMap
 
 ----------------------------------------------------------------
