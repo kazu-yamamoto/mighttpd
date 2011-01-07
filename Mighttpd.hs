@@ -88,17 +88,21 @@ makeStartedHook opt = do
   where
     ignoreSigChild = installHandler sigCHLD Ignore Nothing
 
+----------------------------------------------------------------
+
 daemonize :: IO () -> IO ()
-daemonize program = do
-    forkProcess p
-    exitImmediately ExitSuccess
-  where
-    p = do
-        createSession
-        forkProcess p'
-        exitImmediately ExitSuccess
-    p' = do
+daemonize program = ensureDetachTerminalCanWork $ do
+    detachTerminal
+    ensureNeverAttachTerminal $ do
         changeWorkingDirectory "/"
         setFileCreationMask 0
         mapM_ closeFd [stdInput, stdOutput, stdError]
         program
+  where
+    ensureDetachTerminalCanWork p = do
+        forkProcess p
+        exitImmediately ExitSuccess
+    ensureNeverAttachTerminal p = do
+        forkProcess p
+        exitImmediately ExitSuccess
+    detachTerminal = createSession
