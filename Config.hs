@@ -2,8 +2,10 @@
 
 module Config (Option(..), parseOption, defaultOption) where
 
+import Control.Applicative hiding (many,optional,(<|>))
 import Data.List (isPrefixOf)
-import Parsec
+import Text.Parsec
+import Text.Parsec.String
 
 ----------------------------------------------------------------
 

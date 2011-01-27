@@ -2,9 +2,11 @@
 
 module URLMap (parseURLMap, URL, URLMap, ConvInfo(..)) where
 
+import Control.Applicative hiding (many,optional,(<|>))
 import qualified Data.ByteString.Char8 as S
 import Network.Web.URI
-import Parsec
+import Text.Parsec
+import Text.Parsec.String
 
 type URL = String
 data ConvInfo = CIFile !String | CICgi { progDir :: !String
